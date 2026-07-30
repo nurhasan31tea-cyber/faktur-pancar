@@ -27,14 +27,13 @@
             justify-content: center;
         }
         
-        /* Canvas Presisi 1 Halaman A4 Flexbox */
+        /* Canvas Presisi 1 Halaman A4 */
         .paper {
             width: 794px;
-            height: 1122px;
+            min-height: 1050px;
             background: #fff;
             position: relative;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            overflow: hidden;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -46,7 +45,7 @@
             top: 0;
             right: 0;
             width: 18px;
-            height: 140px;
+            height: 130px;
             background: linear-gradient(to right, #2c3a59, #4a5c82);
         }
         .bottom-right-accent {
@@ -54,7 +53,7 @@
             bottom: 70px;
             right: 0;
             width: 22px;
-            height: 140px;
+            height: 120px;
             background: #1e283d;
             z-index: 1;
         }
@@ -69,37 +68,37 @@
         .header-green-box {
             background: #50643a;
             color: white;
-            padding: 16px 25px;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
+            padding: 12px 22px;
+            border-bottom-left-radius: 18px;
+            border-bottom-right-radius: 18px;
             width: 55%;
         }
         .header-green-box h1 {
             margin: 0;
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 900;
             letter-spacing: 1px;
             line-height: 1;
         }
         .header-green-box h2 {
-            margin: 4px 0 0 0;
-            font-size: 18px;
+            margin: 3px 0 0 0;
+            font-size: 16px;
             font-weight: 700;
             letter-spacing: 1px;
         }
         .logo-area {
             text-align: center;
-            padding-top: 12px;
+            padding-top: 10px;
         }
         .logo-icon {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             fill: #50643a;
         }
         .logo-title {
             color: #2c3a59;
             font-weight: 900;
-            font-size: 14px;
+            font-size: 13px;
             letter-spacing: 1px;
             margin-top: 2px;
         }
@@ -114,38 +113,38 @@
         .info-section {
             display: flex;
             justify-content: space-between;
-            padding: 12px 35px 5px 35px;
-            font-size: 13px;
+            padding: 10px 35px 5px 35px;
+            font-size: 12px;
         }
         .from-box { width: 45%; }
-        .from-box label { font-weight: bold; font-size: 13px; }
+        .from-box label { font-weight: bold; font-size: 12px; }
         .input-underline {
             border: none;
             border-bottom: 1px solid #555;
             width: 100%;
             margin-top: 2px;
             outline: none;
-            font-size: 13px;
+            font-size: 12px;
             padding: 2px 0;
         }
-        .meta-box { width: 48%; font-size: 13px; }
-        .meta-row { display: flex; margin-bottom: 3px; }
-        .meta-label { width: 80px; }
+        .meta-box { width: 48%; font-size: 12px; }
+        .meta-row { display: flex; margin-bottom: 2px; }
+        .meta-label { width: 75px; }
         .meta-val { display: flex; flex: 1; }
-        .meta-input { border: none; outline: none; width: 100%; font-size: 13px; }
+        .meta-input { border: none; outline: none; width: 100%; font-size: 12px; }
 
         /* --- TABEL DESKRIPSI --- */
         .table-container { padding: 5px 35px; }
         table { width: 100%; border-collapse: collapse; }
         th {
             text-align: left;
-            padding: 6px 4px;
+            padding: 5px 4px;
             font-size: 12px;
             font-weight: 900;
             border-bottom: 2px solid #222;
         }
         td {
-            padding: 6px 4px;
+            padding: 5px 4px;
             font-size: 12px;
             border-bottom: 1px solid #111;
         }
@@ -155,12 +154,12 @@
             border-radius: 3px;
             text-align: center;
             font-size: 12px;
-            padding: 2px;
+            padding: 1px;
         }
 
         /* --- SUMMARY --- */
         .summary-container { display: flex; justify-content: flex-end; padding: 5px 35px; }
-        .summary-box { width: 240px; font-size: 12px; }
+        .summary-box { width: 230px; font-size: 12px; }
         .summary-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
         .summary-row label { font-weight: bold; color: #333; }
         .summary-input {
@@ -173,17 +172,17 @@
         }
         .total-line {
             border-top: 2px solid #111;
-            margin-top: 4px;
-            padding-top: 4px;
+            margin-top: 3px;
+            padding-top: 3px;
             font-weight: 900;
-            font-size: 15px;
+            font-size: 14px;
         }
 
         /* --- BOTTOM SECTION --- */
         .bottom-section {
             display: flex;
             justify-content: space-between;
-            padding: 10px 35px 15px 35px;
+            padding: 10px 35px 10px 35px;
             font-size: 12px;
             position: relative;
             z-index: 2;
@@ -191,20 +190,20 @@
         .payment-box { width: 55%; }
         .payment-title { font-weight: 900; font-size: 12px; margin-bottom: 3px; }
         .pay-options span { cursor: pointer; text-decoration: underline; font-weight: bold; }
-        .thanks-note { margin-top: 8px; font-weight: bold; font-size: 12px; }
+        .thanks-note { margin-top: 6px; font-weight: bold; font-size: 12px; }
         .sub-thanks { font-size: 11px; color: #444; margin-top: 1px; }
 
         .pengelola-box {
             width: 40%;
             text-align: center;
-            margin-top: 10px;
+            margin-top: 5px;
             font-weight: 900;
             font-size: 12px;
             color: #111;
             line-height: 1.3;
         }
 
-        /* --- FOOTER BAR (DALAM ALUR FLEXBOX) --- */
+        /* --- FOOTER BAR --- */
         .footer-bar {
             width: 100%;
             height: 75px;
@@ -216,7 +215,7 @@
             padding-right: 130px;
             font-size: 11px;
             position: relative;
-            margin-top: auto;
+            margin-top: 15px;
             z-index: 10;
         }
         .footer-left-accent {
@@ -494,7 +493,7 @@
 
         const opt = {
             margin:       0,
-            filename:     `Bukti_pembayaran_TalagaPancar_${namaPemesan}.pdf`,
+            filename:     `Faktur_TalagaPancar_${namaPemesan}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2, useCORS: true, allowTaint: true, logging: false },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
