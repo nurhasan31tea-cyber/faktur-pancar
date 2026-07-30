@@ -35,7 +35,7 @@
             position: relative;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             overflow: hidden;
-            padding-bottom: 85px; /* Ruang khusus untuk footer */
+            padding-bottom: 85px;
         }
 
         /* --- DEKORASI PINGGIR --- */
@@ -202,7 +202,7 @@
             line-height: 1.3;
         }
 
-        /* --- FOOTER BAR (LOCKED ABSOLUTE DI BOTTOM A4) --- */
+        /* --- FOOTER BAR --- */
         .footer-bar {
             position: absolute;
             bottom: 0;
@@ -287,7 +287,7 @@
 </head>
 <body>
 
-<button class="btn-print-float" id="btnDownload" onclick="simpanKePDF()">💾 Simpan File PDF</button>
+<button class="btn-print-float" id="btnDownload" onclick="simpanKePDF()">💾 Simpan PDF & Chat WA</button>
 
 <div class="paper-container">
     <div class="paper" id="fakturArea">
@@ -314,7 +314,7 @@
             <div class="from-box">
                 <label>FROM:</label>
                 <input type="text" id="namaPemesanInput" class="input-underline" placeholder="Nama Pemesan" value="Ratna">
-                <input type="text" class="input-underline" value="083811940326">
+                <input type="text" id="hpPemesanInput" class="input-underline" placeholder="Nomor WA Pemesan (misal: 0838...)" value="083811940326">
             </div>
             <div class="meta-box">
                 <div class="meta-row">
@@ -390,7 +390,7 @@
             </div>
         </div>
 
-        <!-- FOOTER BAR (NO. HP, ALAMAT, & SCAN BARCODE ADMIN) -->
+        <!-- FOOTER BAR -->
         <div class="footer-bar">
             <div class="footer-left-accent"></div>
             <div class="footer-col">
@@ -468,27 +468,49 @@
         document.getElementById('grandTotalVal').innerText = grandTotal.toLocaleString('id-ID');
     }
 
+    // Fungsi konversi nomor HP lokal (08...) ke format internasional (628...)
+    function formatNomorWA(hp) {
+        let nomor = hp.replace(/[^0-9]/g, '');
+        if (nomor.startsWith('0')) {
+            nomor = '62' + nomor.slice(1);
+        }
+        return nomor;
+    }
+
     function simpanKePDF() {
         const element = document.getElementById('fakturArea');
         const btn = document.getElementById('btnDownload');
         
         const inputNama = document.getElementById('namaPemesanInput').value.trim();
+        const inputHP = document.getElementById('hpPemesanInput').value.trim();
         const namaPemesan = inputNama ? inputNama.replace(/[^a-zA-Z0-9]/g, "_") : "Pelanggan";
+        const totalBayar = document.getElementById('grandTotalVal').innerText;
         
         btn.innerText = "⏳ Memproses PDF...";
 
         const opt = {
             margin:       0,
-            filename:     `Faktur_TelagaPancar_${namaPemesan}.pdf`,
+            filename:     `Bukti_Pembayaran_TalagaPancar_${namaPemesan}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2, useCORS: true, allowTaint: true, logging: false },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
         html2pdf().set(opt).from(element).save().then(() => {
-            btn.innerText = "💾 Simpan File PDF";
+            btn.innerText = "💾 Simpan PDF & Chat WA";
+            
+            // JIKA NOMOR HP PEMESAN DIISI, OTOMATIS BUKA WHATSAPP PEMESAN
+            if (inputHP) {
+                const noWA = formatNomorWA(inputHP);
+                const pesanTeks = `Halo Kak ${inputNama || 'Pelanggan'},\n\nTerima kasih telah melakukan pembayaran di *Buper Talaga Pancar*.\nTotal Pembayaran: *Rp. ${totalBayar}*\n\nFaktur pembayaran resmi Anda sudah kami unduh. Berikut kami lampirkan file bukti pembayarannya.\n\nSalam,\n*Pengelola Buper Talaga Pancar*`;
+                
+                // Beri jeda 1 detik agar browser menyelesaikan download PDF terlebih dahulu
+                setTimeout(() => {
+                    window.location.href = `https://wa.me/${noWA}?text=${encodeURIComponent(pesanTeks)}`;
+                }, 1000);
+            }
         }).catch(() => {
-            btn.innerText = "💾 Simpan File PDF";
+            btn.innerText = "💾 Simpan PDF & Chat WA";
             alert("Gagal mengunduh PDF, silakan coba lagi.");
         });
     }
