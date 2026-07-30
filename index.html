@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faktur Pembayaran - Buper Talaga Pancar</title>
+    <style>
+        * { box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #eef1ec; margin: 0; padding: 12px; color: #333; }
+        .card { max-width: 600px; margin: 0 auto; background: #fff; padding: 16px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .header { background: #4D6238; color: white; padding: 16px; border-radius: 8px; margin-bottom: 16px; }
+        .header h1 { margin: 0; font-size: 22px; letter-spacing: 1px; }
+        .header h3 { margin: 4px 0 0 0; font-size: 13px; font-weight: normal; opacity: 0.9; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 12px; font-weight: bold; color: #4D6238; margin-bottom: 4px; }
+        .form-group input, .form-group select { width: 100%; padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; }
+        .row { display: flex; gap: 8px; }
+        .col { flex: 1; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
+        th { background: #f4f6f2; color: #4D6238; text-align: left; padding: 8px; border-bottom: 2px solid #4D6238; }
+        td { padding: 8px; border-bottom: 1px solid #eee; vertical-align: middle; }
+        .input-qty { width: 60px; padding: 6px; text-align: center; border: 1px solid #ccc; border-radius: 4px; }
+        .total-box { margin-top: 15px; background: #f8fbf6; padding: 12px; border-radius: 8px; border: 1px solid #d8e2d2; text-align: right; font-size: 14px; }
+        .total-box div { margin-bottom: 6px; }
+        .grand-total { font-size: 18px; font-weight: bold; color: #4D6238; border-top: 2px solid #4D6238; padding-top: 8px; margin-top: 8px; }
+        .footer-info { margin-top: 20px; font-size: 11px; color: #555; background: #fafafa; padding: 10px; border-radius: 6px; border-left: 4px solid #4D6238; }
+        .btn-action { background: #4D6238; color: white; border: none; padding: 14px; width: 100%; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 16px; cursor: pointer; }
+        @media print {
+            body { background: white; padding: 0; }
+            .card { box-shadow: none; max-width: 100%; }
+            .btn-action { display: none; }
+            .input-qty, input, select { border: none; background: transparent; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="header">
+        <h1>FAKTUR PEMBAYARAN</h1>
+        <h3>TELAGA PANCAR - KELOMPOK TANI HUTAN</h3>
+    </div>
+
+    <div class="form-group">
+        <label>FROM (Nama Pemesan):</label>
+        <input type="text" id="fromName" placeholder="Nama Pemesan / Instansi">
+    </div>
+
+    <div class="row">
+        <div class="col form-group">
+            <label>Faktur (Camping Blok):</label>
+            <input type="text" id="blok" value="Pembayaran camping blok">
+        </div>
+        <div class="col form-group">
+            <label>Akun:</label>
+            <input type="text" id="akun" value="BTPO">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Tanggal / Lokasi:</label>
+        <input type="text" id="tanggal" placeholder="Majalengka, ...">
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Deskripsi</th>
+                <th style="width: 70px;">Jumlah</th>
+                <th style="text-align: right;">Total</th>
+            </tr>
+        </thead>
+        <tbody id="itemTable"></tbody>
+    </table>
+
+    <div class="total-box">
+        <div>Sub Total: <strong id="subtotal">Rp 0</strong></div>
+        <div>
+            Diskon: Rp <input type="number" id="diskon" value="0" style="width: 90px; text-align: right;" oninput="hitungTotal()">
+        </div>
+        <div>
+            DP: Rp <input type="number" id="dp" value="0" style="width: 90px; text-align: right;" oninput="hitungTotal()">
+        </div>
+        <div class="grand-total">
+            TOTAL: <span id="grandTotal">Rp 0</span>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 15px;">
+        <div class="col form-group">
+            <label>Cara Pembayaran:</label>
+            <select id="paymentMethod" onchange="toggleBankInput()">
+                <option value="Cash">Cash</option>
+                <option value="Online">Online</option>
+            </select>
+        </div>
+        <div class="col form-group" id="bankBox" style="display: none;">
+            <label>Bank / No. Rekening:</label>
+            <input type="text" placeholder="Nama Bank & Rek">
+        </div>
+    </div>
+
+    <div class="footer-info">
+        <b>PENGELOLA BUPER TALAGA PANCAR</b><br>
+        No. HP: +62 858-4677-5638 (ADE HIDAYAT)<br>
+        Alamat: Jl. Lengkong kulon kec.sindangwangi kab.majalengka
+    </div>
+
+    <button class="btn-action" onclick="window.print()">Cetak / Simpan PDF</button>
+</div>
+
+<script>
+    const items = [
+        { name: "Tiket camping", price: 15000, unit: "Peserta" },
+        { name: "Tenda", price: 75000, unit: "Unit" },
+        { name: "Kayu bakar", price: 110000, unit: "m³" },
+        { name: "Tenda tarub", price: 250000, unit: "Lokal" },
+        { name: "Soundsystem", price: 400000, unit: "Unit" }
+    ];
+
+    function renderItems() {
+        const tbody = document.getElementById('itemTable');
+        tbody.innerHTML = '';
+        items.forEach((item, index) => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>
+                        <b>${item.name}</b><br>
+                        <small style="color:#666;">Rp ${item.price.toLocaleString('id-ID')} / ${item.unit}</small>
+                    </td>
+                    <td>
+                        <input type="number" class="input-qty" id="qty-${index}" value="0" min="0" oninput="hitungTotal()">
+                    </td>
+                    <td style="text-align: right; font-weight: bold;" id="total-${index}">
+                        Rp 0
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    function hitungTotal() {
+        let subtotal = 0;
+        items.forEach((item, index) => {
+            const qty = parseFloat(document.getElementById(`qty-${index}`).value) || 0;
+            const itemTotal = qty * item.price;
+            document.getElementById(`total-${index}`).innerText = "Rp " + itemTotal.toLocaleString('id-ID');
+            subtotal += itemTotal;
+        });
+
+        const diskon = parseFloat(document.getElementById('diskon').value) || 0;
+        const dp = parseFloat(document.getElementById('dp').value) || 0;
+        const grandTotal = Math.max(0, subtotal - diskon - dp);
+
+        document.getElementById('subtotal').innerText = "Rp " + subtotal.toLocaleString('id-ID');
+        document.getElementById('grandTotal').innerText = "Rp " + grandTotal.toLocaleString('id-ID');
+    }
+
+    function toggleBankInput() {
+        const method = document.getElementById('paymentMethod').value;
+        document.getElementById('bankBox').style.display = (method === 'Online') ? 'block' : 'none';
+    }
+
+    renderItems();
+</script>
+
+</body>
+</html>
