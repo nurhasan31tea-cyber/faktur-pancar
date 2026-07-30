@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FAKTUR PEMBAYARAN - TELAGA PANCAR</title>
+    <title>FAKTUR PEMBAYARAN - TALAGA PANCAR</title>
     <!-- Library html2pdf untuk PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <!-- Library QRCode JS untuk Barcode Asli -->
@@ -27,7 +27,7 @@
             justify-content: center;
         }
         
-        /* Canvas Presisi 1 Halaman A4 */
+        /* Canvas Presisi 1 Halaman A4 Flexbox */
         .paper {
             width: 794px;
             height: 1122px;
@@ -35,6 +35,9 @@
             position: relative;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         /* --- DEKORASI PINGGIR --- */
@@ -136,13 +139,13 @@
         table { width: 100%; border-collapse: collapse; }
         th {
             text-align: left;
-            padding: 5px 4px;
+            padding: 6px 4px;
             font-size: 12px;
             font-weight: 900;
             border-bottom: 2px solid #222;
         }
         td {
-            padding: 5px 4px;
+            padding: 6px 4px;
             font-size: 12px;
             border-bottom: 1px solid #111;
         }
@@ -180,7 +183,7 @@
         .bottom-section {
             display: flex;
             justify-content: space-between;
-            padding: 10px 35px 5px 35px;
+            padding: 10px 35px 15px 35px;
             font-size: 12px;
             position: relative;
             z-index: 2;
@@ -201,20 +204,19 @@
             line-height: 1.3;
         }
 
-        /* --- FOOTER BAR --- */
+        /* --- FOOTER BAR (DALAM ALUR FLEXBOX) --- */
         .footer-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
             width: 100%;
-            height: 70px;
+            height: 75px;
             background: #50643a;
             color: #ffffff !important;
             display: flex;
             align-items: center;
             padding-left: 70px;
-            padding-right: 120px;
+            padding-right: 130px;
             font-size: 11px;
+            position: relative;
+            margin-top: auto;
             z-index: 10;
         }
         .footer-left-accent {
@@ -239,8 +241,9 @@
         }
         .qr-box {
             position: absolute;
-            right: 20px;
-            bottom: 8px;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
             height: 54px;
             background: #ffffff;
             display: flex;
@@ -294,99 +297,101 @@
         <div class="right-accent-bar"></div>
         <div class="bottom-right-accent"></div>
 
-        <!-- HEADER -->
-        <div class="header">
-            <div class="header-green-box">
-                <h1>FAKTUR</h1>
-                <h2>PEMBAYARAN</h2>
-            </div>
-            <div class="logo-area">
-                <svg class="logo-icon" viewBox="0 0 24 24">
-                    <path d="M12,2C12,2 7,6 7,12C7,15.86 10.14,19 14,19C17.86,19 21,15.86 21,12C21,6 12,2 12,2M13.5,13C12.67,13 12,12.33 12,11.5C12,10.67 12.67,10 13.5,10C14.33,10 15,10.67 15,11.5C15,12.33 14.33,13 13.5,13Z"/>
-                </svg>
-                <div class="logo-title">TELAGA PANCAR</div>
-                <div class="logo-sub">KELOMPOK TANI HUTAN</div>
-            </div>
-        </div>
-
-        <!-- INFO PEMESAN & FAKTUR -->
-        <div class="info-section">
-            <div class="from-box">
-                <label>FROM:</label>
-                <input type="text" id="namaPemesanInput" class="input-underline" placeholder="Nama Pemesan" value="Ratna">
-                <input type="text" id="hpPemesanInput" class="input-underline" placeholder="Nomor WA Pemesan (misal: 0838...)" value="083811940326">
-            </div>
-            <div class="meta-box">
-                <div class="meta-row">
-                    <span class="meta-label">Faktur</span>
-                    <span class="meta-val">: <input type="text" class="meta-input" value="Pembayaran camping blok B"></span>
+        <div>
+            <!-- HEADER -->
+            <div class="header">
+                <div class="header-green-box">
+                    <h1>FAKTUR</h1>
+                    <h2>PEMBAYARAN</h2>
                 </div>
-                <div class="meta-row">
-                    <span class="meta-label">Akun</span>
-                    <span class="meta-val">: <input type="text" class="meta-input" value="BTPO"></span>
-                </div>
-                <div class="meta-row">
-                    <span class="meta-label">Tanggal</span>
-                    <span class="meta-val">: <input type="text" class="meta-input" value="Majalengka, 30 juli 2026"></span>
+                <div class="logo-area">
+                    <svg class="logo-icon" viewBox="0 0 24 24">
+                        <path d="M12,2C12,2 7,6 7,12C7,15.86 10.14,19 14,19C17.86,19 21,15.86 21,12C21,6 12,2 12,2M13.5,13C12.67,13 12,12.33 12,11.5C12,10.67 12.67,10 13.5,10C14.33,10 15,10.67 15,11.5C15,12.33 14.33,13 13.5,13Z"/>
+                    </svg>
+                    <div class="logo-title">TALAGA PANCAR</div>
+                    <div class="logo-sub">KELOMPOK TANI HUTAN</div>
                 </div>
             </div>
-        </div>
 
-        <!-- TABEL UTAMA -->
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 35%;">DESKRIPSI</th>
-                        <th style="width: 25%;">HARGA</th>
-                        <th style="width: 20%;">JUMLAH</th>
-                        <th style="width: 20%; text-align: right;">TOTAL</th>
-                    </tr>
-                </thead>
-                <tbody id="itemRows"></tbody>
-            </table>
-        </div>
-
-        <!-- SUMMARY -->
-        <div class="summary-container">
-            <div class="summary-box">
-                <div class="summary-row">
-                    <span>SUB TOTAL</span>
-                    <span>Rp. <span id="subtotalVal">0</span></span>
+            <!-- INFO PEMESAN & FAKTUR -->
+            <div class="info-section">
+                <div class="from-box">
+                    <label>FROM:</label>
+                    <input type="text" id="namaPemesanInput" class="input-underline" placeholder="Nama Pemesan" value="Ratna">
+                    <input type="text" id="hpPemesanInput" class="input-underline" placeholder="Nomor WA Pemesan (misal: 0838...)" value="083811940326">
                 </div>
-                <div class="summary-row">
-                    <label>DISKON</label>
-                    <div>Rp. <input type="number" id="diskonInput" class="summary-input" value="200000" oninput="hitungSemua()"></div>
-                </div>
-                <div class="summary-row">
-                    <label>DP</label>
-                    <div>Rp. <input type="number" id="dpInput" class="summary-input" value="350000" oninput="hitungSemua()"></div>
-                </div>
-                <div class="summary-row total-line">
-                    <u>TOTAL</u>
-                    <span>Rp. <span id="grandTotalVal">0</span></span>
+                <div class="meta-box">
+                    <div class="meta-row">
+                        <span class="meta-label">Faktur</span>
+                        <span class="meta-val">: <input type="text" class="meta-input" value="Pembayaran camping blok B"></span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-label">Akun</span>
+                        <span class="meta-val">: <input type="text" class="meta-input" value="BTPO"></span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-label">Tanggal</span>
+                        <span class="meta-val">: <input type="text" class="meta-input" value="Majalengka, 30 juli 2026"></span>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- CARA PEMBAYARAN -->
-        <div class="bottom-section">
-            <div class="payment-box">
-                <div class="payment-title">CARA PEMBAYARAN</div>
-                <div class="pay-options">
-                    Name &nbsp; <b>Cash</b> &nbsp;/&nbsp; Online
-                </div>
-                <div style="margin-top: 4px;">Id Bank : -</div>
-                <div>Bank &nbsp;&nbsp;&nbsp;&nbsp;: -</div>
-
-                <div class="thanks-note">Terima kasih atas kunjungan anda</div>
-                <div class="sub-thanks">Menghubungkan anak dengan alam melalui camping</div>
+            <!-- TABEL UTAMA -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 35%;">DESKRIPSI</th>
+                            <th style="width: 25%;">HARGA</th>
+                            <th style="width: 20%;">JUMLAH</th>
+                            <th style="width: 20%; text-align: right;">TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemRows"></tbody>
+                </table>
             </div>
 
-            <div class="pengelola-box">
-                PENGELOLA<br>
-                BUPER TALAGA<br>
-                PANCAR
+            <!-- SUMMARY -->
+            <div class="summary-container">
+                <div class="summary-box">
+                    <div class="summary-row">
+                        <span>SUB TOTAL</span>
+                        <span>Rp. <span id="subtotalVal">0</span></span>
+                    </div>
+                    <div class="summary-row">
+                        <label>DISKON</label>
+                        <div>Rp. <input type="number" id="diskonInput" class="summary-input" value="200000" oninput="hitungSemua()"></div>
+                    </div>
+                    <div class="summary-row">
+                        <label>DP</label>
+                        <div>Rp. <input type="number" id="dpInput" class="summary-input" value="350000" oninput="hitungSemua()"></div>
+                    </div>
+                    <div class="summary-row total-line">
+                        <u>TOTAL</u>
+                        <span>Rp. <span id="grandTotalVal">0</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARA PEMBAYARAN -->
+            <div class="bottom-section">
+                <div class="payment-box">
+                    <div class="payment-title">CARA PEMBAYARAN</div>
+                    <div class="pay-options">
+                        Name &nbsp; <b>Cash</b> &nbsp;/&nbsp; Online
+                    </div>
+                    <div style="margin-top: 4px;">Id Bank : -</div>
+                    <div>Bank &nbsp;&nbsp;&nbsp;&nbsp;: -</div>
+
+                    <div class="thanks-note">Terima kasih atas kunjungan anda</div>
+                    <div class="sub-thanks">Menghubungkan anak dengan alam melalui camping</div>
+                </div>
+
+                <div class="pengelola-box">
+                    PENGELOLA<br>
+                    BUPER TALAGA<br>
+                    PANCAR
+                </div>
             </div>
         </div>
 
@@ -489,7 +494,7 @@
 
         const opt = {
             margin:       0,
-            filename:     `Faktur_TelagaPancar_${namaPemesan}.pdf`,
+            filename:     `Bukti_pembayaran_TalagaPancar_${namaPemesan}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2, useCORS: true, allowTaint: true, logging: false },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
