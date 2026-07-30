@@ -468,7 +468,6 @@
         document.getElementById('grandTotalVal').innerText = grandTotal.toLocaleString('id-ID');
     }
 
-    // Fungsi konversi nomor HP lokal (08...) ke format internasional (628...)
     function formatNomorWA(hp) {
         let nomor = hp.replace(/[^0-9]/g, '');
         if (nomor.startsWith('0')) {
@@ -490,7 +489,7 @@
 
         const opt = {
             margin:       0,
-            filename:     `Bukti_Pembayaran_TalagaPancar_${namaPemesan}.pdf`,
+            filename:     `Bukti_pembayaran_TalagaPancar_${namaPemesan}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2, useCORS: true, allowTaint: true, logging: false },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
@@ -499,12 +498,14 @@
         html2pdf().set(opt).from(element).save().then(() => {
             btn.innerText = "💾 Simpan PDF & Chat WA";
             
-            // JIKA NOMOR HP PEMESAN DIISI, OTOMATIS BUKA WHATSAPP PEMESAN
             if (inputHP) {
                 const noWA = formatNomorWA(inputHP);
-                const pesanTeks = `Halo Kak ${inputNama || 'Pelanggan'},\n\nTerima kasih telah melakukan pembayaran di *Buper Talaga Pancar*.\nTotal Pembayaran: *Rp. ${totalBayar}*\n\nFaktur pembayaran resmi Anda sudah kami unduh. Berikut kami lampirkan file bukti pembayarannya.\n\nSalam,\n*Pengelola Buper Talaga Pancar*`;
                 
-                // Beri jeda 1 detik agar browser menyelesaikan download PDF terlebih dahulu
+                // NAMA PEMBAYAR OTOMATIS DIGUNAKAN DI SALAM PEMBUKA
+                const sapaanNama = inputNama ? `Kak ${inputNama}` : "Kak/Bapak/Ibu";
+                
+                const pesanTeks = `Assalamu’alaikum ${sapaanNama},\n\nTerima kasih telah melakukan pembayaran sebesar Rp. ${totalBayar} di akhir kegiatan ini. Pembayaran telah kami terima dengan baik.\n\nBerikut kami lampirkan bukti pembayaran Anda🙏🏻\n\n\nTerima kasih banyak atas kunjungannya, semoga berkesan dan bisa kembali lagi ke Buper Talaga Pancar!\n\nSalam hangat dari saya,\n\nNurhasan [Pengelola Buper Talaga Pancar]`;
+                
                 setTimeout(() => {
                     window.location.href = `https://wa.me/${noWA}?text=${encodeURIComponent(pesanTeks)}`;
                 }, 1000);
