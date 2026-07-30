@@ -4,20 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FAKTUR PEMBAYARAN - TALAGA PANCAR</title>
-    <!-- Library html2pdf untuk konversi ke PDF -->
+    <!-- Library html2pdf untuk PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Library QRCode JS untuk Barcode Asli -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
-        body { background: #dcdcdc; margin: 0; padding: 10px; display: flex; justify-content: center; }
         
-        .paper {
+        body { 
+            background: #dcdcdc; 
+            margin: 0; 
+            padding: 10px; 
+            display: flex; 
+            justify-content: center; 
+        }
+
+        /* Container pembungkus agar responsif di layar HP */
+        .paper-container {
             width: 100%;
-            max-width: 650px;
+            max-width: 794px;
+            overflow-x: auto;
+            display: flex;
+            justify-content: center;
+        }
+        
+        /* Ukuran Canvas Presisi 1 Halaman Full A4 (794px x 1122px) */
+        .paper {
+            width: 794px;
+            height: 1122px;
             background: #fff;
             position: relative;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             overflow: hidden;
-            padding-bottom: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         /* --- DEKORASI PINGGIR (AKSEN BIRU) --- */
@@ -25,16 +46,16 @@
             position: absolute;
             top: 0;
             right: 0;
-            width: 14px;
-            height: 120px;
+            width: 18px;
+            height: 150px;
             background: linear-gradient(to right, #2c3a59, #4a5c82);
         }
         .bottom-right-accent {
             position: absolute;
             bottom: 0;
             right: 0;
-            width: 18px;
-            height: 160px;
+            width: 22px;
+            height: 200px;
             background: #1e283d;
             z-index: 1;
         }
@@ -44,48 +65,48 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            padding-right: 25px;
+            padding-right: 35px;
         }
         .header-green-box {
             background: #50643a;
             color: white;
-            padding: 15px 20px;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
+            padding: 22px 30px;
+            border-bottom-left-radius: 25px;
+            border-bottom-right-radius: 25px;
             width: 55%;
         }
         .header-green-box h1 {
             margin: 0;
-            font-size: 24px;
+            font-size: 32px;
             font-weight: 900;
             letter-spacing: 1px;
             line-height: 1;
         }
         .header-green-box h2 {
-            margin: 3px 0 0 0;
-            font-size: 18px;
+            margin: 4px 0 0 0;
+            font-size: 24px;
             font-weight: 700;
             letter-spacing: 1px;
         }
         .logo-area {
             text-align: center;
-            padding-top: 12px;
+            padding-top: 18px;
         }
         .logo-icon {
-            width: 38px;
-            height: 38px;
+            width: 48px;
+            height: 48px;
             fill: #50643a;
         }
         .logo-title {
             color: #2c3a59;
             font-weight: 900;
-            font-size: 13px;
+            font-size: 16px;
             letter-spacing: 1px;
-            margin-top: 1px;
+            margin-top: 2px;
         }
         .logo-sub {
             color: #50643a;
-            font-size: 8px;
+            font-size: 10px;
             font-weight: bold;
             letter-spacing: 1px;
         }
@@ -94,149 +115,156 @@
         .info-section {
             display: flex;
             justify-content: space-between;
-            padding: 12px 25px 5px 25px;
-            font-size: 12px;
+            padding: 20px 40px 10px 40px;
+            font-size: 14px;
         }
         .from-box { width: 45%; }
-        .from-box label { font-weight: bold; font-size: 13px; }
+        .from-box label { font-weight: bold; font-size: 15px; }
         .input-underline {
             border: none;
             border-bottom: 1px solid #555;
             width: 100%;
-            margin-top: 4px;
+            margin-top: 6px;
             outline: none;
-            font-size: 12px;
-            padding: 1px 0;
+            font-size: 14px;
+            padding: 2px 0;
         }
-        .meta-box { width: 48%; font-size: 12px; }
-        .meta-row { display: flex; margin-bottom: 3px; }
-        .meta-label { width: 70px; }
+        .meta-box { width: 48%; font-size: 14px; }
+        .meta-row { display: flex; margin-bottom: 5px; }
+        .meta-label { width: 85px; }
         .meta-val { display: flex; flex: 1; }
-        .meta-input { border: none; outline: none; width: 100%; font-size: 12px; }
+        .meta-input { border: none; outline: none; width: 100%; font-size: 14px; }
 
         /* --- TABEL DESKRIPSI --- */
-        .table-container { padding: 4px 25px; }
+        .table-container { padding: 10px 40px; }
         table { width: 100%; border-collapse: collapse; }
         th {
             text-align: left;
-            padding: 5px 3px;
-            font-size: 12px;
+            padding: 8px 5px;
+            font-size: 14px;
             font-weight: 900;
             border-bottom: 2px solid #222;
         }
         td {
-            padding: 5px 3px;
-            font-size: 12px;
+            padding: 8px 5px;
+            font-size: 14px;
             border-bottom: 1px solid #111;
         }
         .qty-input {
-            width: 40px;
+            width: 50px;
             border: 1px solid #ccc;
             border-radius: 3px;
             text-align: center;
-            font-size: 11px;
-            padding: 1px;
+            font-size: 13px;
+            padding: 2px;
         }
 
         /* --- SUMMARY --- */
-        .summary-container { display: flex; justify-content: flex-end; padding: 4px 25px; }
-        .summary-box { width: 210px; font-size: 12px; }
-        .summary-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
+        .summary-container { display: flex; justify-content: flex-end; padding: 10px 40px; }
+        .summary-box { width: 250px; font-size: 14px; }
+        .summary-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
         .summary-row label { font-weight: bold; color: #333; }
         .summary-input {
-            width: 70px;
+            width: 85px;
             border: 1px solid #aaa;
             border-radius: 3px;
             text-align: right;
-            padding: 1px;
-            font-size: 11px;
+            padding: 2px;
+            font-size: 13px;
         }
         .total-line {
             border-top: 2px solid #111;
-            margin-top: 3px;
-            padding-top: 3px;
+            margin-top: 5px;
+            padding-top: 5px;
             font-weight: 900;
-            font-size: 14px;
+            font-size: 17px;
         }
 
         /* --- BOTTOM SECTION --- */
         .bottom-section {
             display: flex;
             justify-content: space-between;
-            padding: 8px 25px 8px 25px;
-            font-size: 11px;
+            padding: 15px 40px 20px 40px;
+            font-size: 13px;
             position: relative;
             z-index: 2;
         }
         .payment-box { width: 55%; }
-        .payment-title { font-weight: 900; font-size: 12px; margin-bottom: 3px; }
+        .payment-title { font-weight: 900; font-size: 14px; margin-bottom: 5px; }
         .pay-options span { cursor: pointer; text-decoration: underline; font-weight: bold; }
-        .thanks-note { margin-top: 8px; font-weight: bold; font-size: 12px; }
-        .sub-thanks { font-size: 10px; color: #444; margin-top: 1px; }
+        .thanks-note { margin-top: 15px; font-weight: bold; font-size: 14px; }
+        .sub-thanks { font-size: 12px; color: #444; margin-top: 2px; }
 
         .pengelola-box {
             width: 40%;
             text-align: center;
-            margin-top: 15px;
+            margin-top: 25px;
             font-weight: 900;
-            font-size: 12px;
+            font-size: 14px;
             color: #111;
-            line-height: 1.2;
+            line-height: 1.3;
         }
 
-        /* --- FOOTER BAR --- */
+        /* --- FOOTER BAR (DITEMPEL KETAT DI PALING BAWAH A4) --- */
         .footer-bar {
             position: relative;
-            margin-top: 10px;
             width: 100%;
-            height: 55px;
+            height: 70px;
             background: #50643a;
             color: #ffffff !important;
             display: flex;
             align-items: center;
-            padding-left: 55px;
-            padding-right: 100px;
-            font-size: 10px;
+            padding-left: 70px;
+            padding-right: 120px;
+            font-size: 12px;
             z-index: 2;
         }
         .footer-left-accent {
             position: absolute;
             left: 0;
             bottom: 0;
-            width: 40px;
+            width: 50px;
             height: 100%;
             background: #1e283d;
-            border-right: 3px solid #3b4e75;
+            border-right: 4px solid #3b4e75;
         }
         .footer-col { 
             flex: 1; 
             color: #ffffff !important; 
-            line-height: 1.2;
+            line-height: 1.3;
         }
         .footer-col b { 
             display: block; 
-            font-size: 11px; 
-            margin-bottom: 1px; 
+            font-size: 13px; 
+            margin-bottom: 2px; 
             color: #ffffff !important;
         }
         .qr-box {
             position: absolute;
-            right: 15px;
+            right: 20px;
             bottom: 0;
-            height: 55px;
+            height: 70px;
             background: #ffffff;
             display: flex;
             align-items: center;
-            padding: 3px 6px;
+            padding: 4px 8px;
+        }
+        #qrcode {
+            width: 52px;
+            height: 52px;
+        }
+        #qrcode img, #qrcode canvas {
+            width: 52px !important;
+            height: 52px !important;
         }
         .scan-text {
             writing-mode: vertical-rl;
             text-orientation: upright;
-            font-size: 7px;
+            font-size: 8px;
             font-weight: bold;
             color: #000000;
             letter-spacing: -1px;
-            margin-left: 3px;
+            margin-left: 5px;
         }
 
         /* --- TOMBOL CETAK --- */
@@ -247,9 +275,9 @@
             background: #50643a;
             color: white;
             border: none;
-            padding: 12px 20px;
+            padding: 14px 24px;
             border-radius: 30px;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: bold;
             box-shadow: 0 4px 12px rgba(0,0,0,0.4);
             cursor: pointer;
@@ -261,145 +289,129 @@
 
 <button class="btn-print-float" id="btnDownload" onclick="simpanKePDF()">💾 Simpan File PDF</button>
 
-<div class="paper" id="fakturArea">
-    <div class="right-accent-bar"></div>
-    <div class="bottom-right-accent"></div>
+<div class="paper-container">
+    <div class="paper" id="fakturArea">
+        <div class="right-accent-bar"></div>
+        <div class="bottom-right-accent"></div>
 
-    <!-- HEADER -->
-    <div class="header">
-        <div class="header-green-box">
-            <h1>FAKTUR</h1>
-            <h2>PEMBAYARAN</h2>
-        </div>
-        <div class="logo-area">
-            <svg class="logo-icon" viewBox="0 0 24 24">
-                <path d="M12,2C12,2 7,6 7,12C7,15.86 10.14,19 14,19C17.86,19 21,15.86 21,12C21,6 12,2 12,2M13.5,13C12.67,13 12,12.33 12,11.5C12,10.67 12.67,10 13.5,10C14.33,10 15,10.67 15,11.5C15,12.33 14.33,13 13.5,13Z"/>
-            </svg>
-            <div class="logo-title">TALAGA PANCAR</div>
-            <div class="logo-sub">KELOMPOK TANI HUTAN</div>
-        </div>
-    </div>
+        <!-- BAGIAN ATAS S/D PAYMENT -->
+        <div>
+            <!-- HEADER -->
+            <div class="header">
+                <div class="header-green-box">
+                    <h1>FAKTUR</h1>
+                    <h2>PEMBAYARAN</h2>
+                </div>
+                <div class="logo-area">
+                    <svg class="logo-icon" viewBox="0 0 24 24">
+                        <path d="M12,2C12,2 7,6 7,12C7,15.86 10.14,19 14,19C17.86,19 21,15.86 21,12C21,6 12,2 12,2M13.5,13C12.67,13 12,12.33 12,11.5C12,10.67 12.67,10 13.5,10C14.33,10 15,10.67 15,11.5C15,12.33 14.33,13 13.5,13Z"/>
+                    </svg>
+                    <div class="logo-title">TALAGA PANCAR</div>
+                    <div class="logo-sub">KELOMPOK TANI HUTAN</div>
+                </div>
+            </div>
 
-    <!-- INFO PEMESAN & FAKTUR -->
-    <div class="info-section">
-        <div class="from-box">
-            <label>FROM:</label>
-            <input type="text" id="namaPemesanInput" class="input-underline" placeholder="Nama Pemesan">
-            <input type="text" class="input-underline">
-        </div>
-        <div class="meta-box">
-            <div class="meta-row">
-                <span class="meta-label">Faktur</span>
-                <span class="meta-val">: <input type="text" class="meta-input" value="Pembayaran camping blok"></span>
+            <!-- INFO PEMESAN & FAKTUR -->
+            <div class="info-section">
+                <div class="from-box">
+                    <label>FROM:</label>
+                    <input type="text" id="namaPemesanInput" class="input-underline" placeholder="Nama Pemesan">
+                    <input type="text" class="input-underline">
+                </div>
+                <div class="meta-box">
+                    <div class="meta-row">
+                        <span class="meta-label">Faktur</span>
+                        <span class="meta-val">: <input type="text" class="meta-input" value="Pembayaran camping blok"></span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-label">Akun</span>
+                        <span class="meta-val">: <input type="text" class="meta-input" value="BTPO"></span>
+                    </div>
+                    <div class="meta-row">
+                        <span class="meta-label">Tanggal</span>
+                        <span class="meta-val">: <input type="text" class="meta-input" value="Majalengka, 2026"></span>
+                    </div>
+                </div>
             </div>
-            <div class="meta-row">
-                <span class="meta-label">Akun</span>
-                <span class="meta-val">: <input type="text" class="meta-input" value="BTPO"></span>
-            </div>
-            <div class="meta-row">
-                <span class="meta-label">Tanggal</span>
-                <span class="meta-val">: <input type="text" class="meta-input" value="Majalengka, 2026"></span>
-            </div>
-        </div>
-    </div>
 
-    <!-- TABEL UTAMA -->
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 35%;">DESKRIPSI</th>
-                    <th style="width: 25%;">HARGA</th>
-                    <th style="width: 20%;">JUMLAH</th>
-                    <th style="width: 20%; text-align: right;">TOTAL</th>
-                </tr>
-            </thead>
-            <tbody id="itemRows"></tbody>
-        </table>
-    </div>
+            <!-- TABEL UTAMA -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 35%;">DESKRIPSI</th>
+                            <th style="width: 25%;">HARGA</th>
+                            <th style="width: 20%;">JUMLAH</th>
+                            <th style="width: 20%; text-align: right;">TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemRows"></tbody>
+                </table>
+            </div>
 
-    <!-- SUMMARY -->
-    <div class="summary-container">
-        <div class="summary-box">
-            <div class="summary-row">
-                <span>SUB TOTAL</span>
-                <span>Rp. <span id="subtotalVal">0</span></span>
+            <!-- SUMMARY -->
+            <div class="summary-container">
+                <div class="summary-box">
+                    <div class="summary-row">
+                        <span>SUB TOTAL</span>
+                        <span>Rp. <span id="subtotalVal">0</span></span>
+                    </div>
+                    <div class="summary-row">
+                        <label>DISKON</label>
+                        <div>Rp. <input type="number" id="diskonInput" class="summary-input" value="0" oninput="hitungSemua()"></div>
+                    </div>
+                    <div class="summary-row">
+                        <label>DP</label>
+                        <div>Rp. <input type="number" id="dpInput" class="summary-input" value="0" oninput="hitungSemua()"></div>
+                    </div>
+                    <div class="summary-row total-line">
+                        <u>TOTAL</u>
+                        <span>Rp. <span id="grandTotalVal">0</span></span>
+                    </div>
+                </div>
             </div>
-            <div class="summary-row">
-                <label>DISKON</label>
-                <div>Rp. <input type="number" id="diskonInput" class="summary-input" value="0" oninput="hitungSemua()"></div>
-            </div>
-            <div class="summary-row">
-                <label>DP</label>
-                <div>Rp. <input type="number" id="dpInput" class="summary-input" value="0" oninput="hitungSemua()"></div>
-            </div>
-            <div class="summary-row total-line">
-                <u>TOTAL</u>
-                <span>Rp. <span id="grandTotalVal">0</span></span>
+
+            <!-- CARA PEMBAYARAN -->
+            <div class="bottom-section">
+                <div class="payment-box">
+                    <div class="payment-title">CARA PEMBAYARAN</div>
+                    <div class="pay-options">
+                        Name &nbsp; <span onclick="selectPay('Cash')">Cash</span> &nbsp;/&nbsp; <span onclick="selectPay('Online')">Online</span>
+                    </div>
+                    <div style="margin-top: 4px;">Id Bank : <input type="text" style="border:none; outline:none; width:120px;" value="-"></div>
+                    <div>Bank &nbsp;&nbsp;&nbsp;&nbsp;: <input type="text" style="border:none; outline:none; width:120px;" value="-"></div>
+
+                    <div class="thanks-note">Terima kasih atas kunjungan anda</div>
+                    <div class="sub-thanks">Menghubungkan anak dengan alam melalui camping</div>
+                </div>
+
+                <div class="pengelola-box">
+                    PENGELOLA<br>
+                    BUPER TALAGA<br>
+                    PANCAR
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- CARA PEMBAYARAN -->
-    <div class="bottom-section">
-        <div class="payment-box">
-            <div class="payment-title">CARA PEMBAYARAN</div>
-            <div class="pay-options">
-                Name &nbsp; <span onclick="selectPay('Cash')">Cash</span> &nbsp;/&nbsp; <span onclick="selectPay('Online')">Online</span>
+        <!-- FOOTER BAR (OTOMATIS PRESISI DI DASHBOARD BAWAH A4) -->
+        <div class="footer-bar">
+            <div class="footer-left-accent"></div>
+            <div class="footer-col">
+                <b>No. Hp</b>
+                +62 858-4677-5638<br>
+                ADE HIDAYAT
             </div>
-            <div style="margin-top: 3px;">Id Bank : <input type="text" style="border:none; outline:none; width:100px;" value="-"></div>
-            <div>Bank &nbsp;&nbsp;&nbsp;&nbsp;: <input type="text" style="border:none; outline:none; width:100px;" value="-"></div>
-
-            <div class="thanks-note">Terima kasih atas kunjungan anda</div>
-            <div class="sub-thanks">Menghubungkan anak dengan alam melalui camping</div>
-        </div>
-
-        <div class="pengelola-box">
-            PENGELOLA<br>
-            BUPER TALAGA<br>
-            PANCAR
-        </div>
-    </div>
-
-    <!-- FOOTER BAR (NOMOR TELEPON & QR CODE PASTI MUNCUL) -->
-    <div class="footer-bar">
-        <div class="footer-left-accent"></div>
-        <div class="footer-col">
-            <b>No. Hp</b>
-            +62 858-4677-5638<br>
-            ADE HIDAYAT
-        </div>
-        <div class="footer-col">
-            <b>ALAMAT</b>
-            Jl. Lengkong kulon<br>
-            kec.sindangwangi<br>
-            kab.majalengka
-        </div>
-        <div class="qr-box">
-            <!-- Vektor SVG QR Code Langsung (Anti-Gagal / Bebas Internet) -->
-            <svg width="42" height="42" viewBox="0 0 25 25">
-                <rect width="25" height="25" fill="white"/>
-                <g fill="black">
-                    <rect x="2" y="2" width="7" height="7"/>
-                    <rect x="3" y="3" width="5" height="5" fill="white"/>
-                    <rect x="4" y="4" width="3" height="3"/>
-                    <rect x="16" y="2" width="7" height="7"/>
-                    <rect x="17" y="3" width="5" height="5" fill="white"/>
-                    <rect x="18" y="4" width="3" height="3"/>
-                    <rect x="2" y="16" width="7" height="7"/>
-                    <rect x="3" y="17" width="5" height="5" fill="white"/>
-                    <rect x="4" y="18" width="3" height="3"/>
-                    <rect x="10" y="2" width="2" height="5"/>
-                    <rect x="10" y="8" width="5" height="2"/>
-                    <rect x="14" y="10" width="2" height="5"/>
-                    <rect x="10" y="16" width="3" height="3"/>
-                    <rect x="16" y="10" width="5" height="2"/>
-                    <rect x="18" y="16" width="3" height="5"/>
-                    <rect x="14" y="18" width="2" height="3"/>
-                    <rect x="10" y="20" width="3" height="2"/>
-                </g>
-            </svg>
-            <div class="scan-text">SCAN ADMIN</div>
+            <div class="footer-col">
+                <b>ALAMAT</b>
+                Jl. Lengkong kulon<br>
+                kec.sindangwangi<br>
+                kab.majalengka
+            </div>
+            <div class="qr-box">
+                <!-- Barcode Scan Admin -->
+                <div id="qrcode"></div>
+                <div class="scan-text">SCAN ADMIN</div>
+            </div>
         </div>
     </div>
 </div>
@@ -423,11 +435,23 @@
                     <td>Rp. ${item.harga.toLocaleString('id-ID')}</td>
                     <td>
                         <input type="number" class="qty-input" id="qty-${idx}" value="0" min="0" oninput="hitungSemua()">
-                        <span style="font-size:10px;">${item.unit}</span>
+                        <span style="font-size:12px;">${item.unit}</span>
                     </td>
                     <td style="text-align: right;">Rp. <span id="total-${idx}">0</span></td>
                 </tr>
             `;
+        });
+    }
+
+    function generateQRCode() {
+        document.getElementById("qrcode").innerHTML = "";
+        new QRCode(document.getElementById("qrcode"), {
+            text: "https://wa.me/6285846775638",
+            width: 128,
+            height: 128,
+            colorDark : "#000000",
+            colorLight : "#ffffff",
+            correctLevel : QRCode.CorrectLevel.H
         });
     }
 
@@ -462,7 +486,7 @@
             filename:     `Faktur_TelagaPancar_${namaPemesan}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
             html2canvas:  { scale: 2, useCORS: true, allowTaint: true },
-            jsPDF:        { unit: 'pt', format: 'a4', orientation: 'portrait' }
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
         html2pdf().set(opt).from(element).save().then(() => {
@@ -474,6 +498,7 @@
     }
 
     muatTabel();
+    generateQRCode();
 </script>
 
 </body>
