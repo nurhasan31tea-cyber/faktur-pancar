@@ -3,521 +3,423 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FAKTUR PEMBAYARAN - TALAGA PANCAR</title>
-    <!-- Library html2pdf untuk PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <!-- Library QRCode JS untuk Barcode Asli -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <title>Pendaftaran & Kalender Booking - Buper Talaga Pancar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
-        
-        body { 
-            background: #dcdcdc; 
-            margin: 0; 
-            padding: 10px; 
-            display: flex; 
-            justify-content: center; 
+        body {
+            background-color: #1b382b;
+            background-image: radial-gradient(#2d5a43 1px, transparent 1px);
+            background-size: 24px 24px;
         }
-
-        .paper-container {
-            width: 100%;
-            max-width: 794px;
-            overflow-x: auto;
-            display: flex;
-            justify-content: center;
+        .wood-board {
+            background: linear-gradient(135deg, #8B5A2B 0%, #654321 100%);
+            border: 4px solid #4a3319;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
         }
-        
-        /* Canvas Presisi 1 Halaman A4 */
-        .paper {
-            width: 794px;
-            height: 1122px;
-            background: #fff;
-            position: relative;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            overflow: hidden;
+        .card-box {
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid #5c4033;
         }
-
-        /* --- DEKORASI PINGGIR --- */
-        .right-accent-bar {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 18px;
-            height: 140px;
-            background: linear-gradient(to right, #2c3a59, #4a5c82);
-        }
-        .bottom-right-accent {
-            position: absolute;
-            bottom: 70px;
-            right: 0;
-            width: 22px;
-            height: 140px;
-            background: #1e283d;
-            z-index: 1;
-        }
-
-        /* --- HEADER --- */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            padding-right: 35px;
-        }
-        .header-green-box {
-            background: #50643a;
-            color: white;
-            padding: 16px 25px;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
-            width: 55%;
-        }
-        .header-green-box h1 {
-            margin: 0;
-            font-size: 26px;
-            font-weight: 900;
-            letter-spacing: 1px;
-            line-height: 1;
-        }
-        .header-green-box h2 {
-            margin: 4px 0 0 0;
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-        .logo-area {
-            text-align: center;
-            padding-top: 12px;
-        }
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            fill: #50643a;
-        }
-        .logo-title {
-            color: #2c3a59;
-            font-weight: 900;
-            font-size: 14px;
-            letter-spacing: 1px;
-            margin-top: 2px;
-        }
-        .logo-sub {
-            color: #50643a;
-            font-size: 9px;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-
-        /* --- INFO PEMESAN & FAKTUR --- */
-        .info-section {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 35px 5px 35px;
-            font-size: 13px;
-        }
-        .from-box { width: 45%; }
-        .from-box label { font-weight: bold; font-size: 13px; }
-        .input-underline {
-            border: none;
-            border-bottom: 1px solid #555;
-            width: 100%;
-            margin-top: 2px;
-            outline: none;
-            font-size: 13px;
-            padding: 2px 0;
-        }
-        .meta-box { width: 48%; font-size: 13px; }
-        .meta-row { display: flex; margin-bottom: 3px; }
-        .meta-label { width: 80px; }
-        .meta-val { display: flex; flex: 1; }
-        .meta-input { border: none; outline: none; width: 100%; font-size: 13px; }
-
-        /* --- TABEL DESKRIPSI --- */
-        .table-container { padding: 5px 35px; }
-        table { width: 100%; border-collapse: collapse; }
-        th {
-            text-align: left;
-            padding: 5px 4px;
-            font-size: 12px;
-            font-weight: 900;
-            border-bottom: 2px solid #222;
-        }
-        td {
-            padding: 5px 4px;
-            font-size: 12px;
-            border-bottom: 1px solid #111;
-        }
-        .qty-input {
-            width: 45px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            text-align: center;
-            font-size: 12px;
-            padding: 2px;
-        }
-
-        /* --- SUMMARY --- */
-        .summary-container { display: flex; justify-content: flex-end; padding: 5px 35px; }
-        .summary-box { width: 240px; font-size: 12px; }
-        .summary-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
-        .summary-row label { font-weight: bold; color: #333; }
-        .summary-input {
-            width: 80px;
-            border: 1px solid #aaa;
-            border-radius: 3px;
-            text-align: right;
-            padding: 2px;
-            font-size: 12px;
-        }
-        .total-line {
-            border-top: 2px solid #111;
-            margin-top: 4px;
-            padding-top: 4px;
-            font-weight: 900;
-            font-size: 15px;
-        }
-
-        /* --- BOTTOM SECTION --- */
-        .bottom-section {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 35px 5px 35px;
-            font-size: 12px;
-            position: relative;
-            z-index: 2;
-        }
-        .payment-box { width: 55%; }
-        .payment-title { font-weight: 900; font-size: 12px; margin-bottom: 3px; }
-        .pay-options span { cursor: pointer; text-decoration: underline; font-weight: bold; }
-        .thanks-note { margin-top: 8px; font-weight: bold; font-size: 12px; }
-        .sub-thanks { font-size: 11px; color: #444; margin-top: 1px; }
-
-        .pengelola-box {
-            width: 40%;
-            text-align: center;
-            margin-top: 10px;
-            font-weight: 900;
-            font-size: 12px;
-            color: #111;
-            line-height: 1.3;
-        }
-
-        /* --- FOOTER BAR --- */
-        .footer-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 70px;
-            background: #50643a;
-            color: #ffffff !important;
-            display: flex;
-            align-items: center;
-            padding-left: 70px;
-            padding-right: 120px;
-            font-size: 11px;
-            z-index: 10;
-        }
-        .footer-left-accent {
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 50px;
-            height: 100%;
-            background: #1e283d;
-            border-right: 4px solid #3b4e75;
-        }
-        .footer-col { 
-            flex: 1; 
-            color: #ffffff !important; 
-            line-height: 1.3;
-        }
-        .footer-col b { 
-            display: block; 
-            font-size: 11px; 
-            margin-bottom: 2px; 
-            color: #ffffff !important;
-        }
-        .qr-box {
-            position: absolute;
-            right: 20px;
-            bottom: 8px;
-            height: 54px;
-            background: #ffffff;
-            display: flex;
-            align-items: center;
-            padding: 3px 6px;
-            border-radius: 4px;
-        }
-        #qrcode {
-            width: 46px;
-            height: 46px;
-        }
-        #qrcode img, #qrcode canvas {
-            width: 46px !important;
-            height: 46px !important;
-            display: block;
-        }
-        .scan-text {
-            writing-mode: vertical-rl;
-            text-orientation: upright;
-            font-size: 8px;
-            font-weight: bold;
-            color: #000000;
-            letter-spacing: -1px;
-            margin-left: 4px;
-        }
-
-        /* --- TOMBOL CETAK --- */
-        .btn-print-float {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #50643a;
-            color: white;
-            border: none;
-            padding: 14px 24px;
-            border-radius: 30px;
-            font-size: 15px;
-            font-weight: bold;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-            cursor: pointer;
-            z-index: 999;
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
         }
     </style>
 </head>
-<body>
+<body class="text-slate-800 min-h-screen py-6 px-3 sm:px-6">
 
-<button class="btn-print-float" id="btnDownload" onclick="simpanKePDF()">💾 Simpan PDF & Chat WA</button>
-
-<div class="paper-container">
-    <div class="paper" id="fakturArea">
-        <div class="right-accent-bar"></div>
-        <div class="bottom-right-accent"></div>
-
-        <!-- HEADER -->
-        <div class="header">
-            <div class="header-green-box">
-                <h1>FAKTUR</h1>
-                <h2>PEMBAYARAN</h2>
-            </div>
-            <div class="logo-area">
-                <svg class="logo-icon" viewBox="0 0 24 24">
-                    <path d="M12,2C12,2 7,6 7,12C7,15.86 10.14,19 14,19C17.86,19 21,15.86 21,12C21,6 12,2 12,2M13.5,13C12.67,13 12,12.33 12,11.5C12,10.67 12.67,10 13.5,10C14.33,10 15,10.67 15,11.5C15,12.33 14.33,13 13.5,13Z"/>
-                </svg>
-                <div class="logo-title">TALAGA PANCAR</div>
-                <div class="logo-sub">KELOMPOK TANI HUTAN</div>
-            </div>
-        </div>
-
-        <!-- INFO PEMESAN & FAKTUR -->
-        <div class="info-section">
-            <div class="from-box">
-                <label>FROM:</label>
-                <input type="text" id="namaPemesanInput" class="input-underline" placeholder="Nama Pemesan" value="Ratna">
-                <input type="text" id="hpPemesanInput" class="input-underline" placeholder="Nomor WA Pemesan (misal: 0838...)" value="083811940326">
-            </div>
-            <div class="meta-box">
-                <div class="meta-row">
-                    <span class="meta-label">Faktur</span>
-                    <span class="meta-val">: <input type="text" class="meta-input" value="Pembayaran camping blok B"></span>
-                </div>
-                <div class="meta-row">
-                    <span class="meta-label">Akun</span>
-                    <span class="meta-val">: <input type="text" class="meta-input" value="BTPO"></span>
-                </div>
-                <div class="meta-row">
-                    <span class="meta-label">Tanggal</span>
-                    <span class="meta-val">: <input type="text" class="meta-input" value="Majalengka, 30 juli 2026"></span>
-                </div>
-            </div>
-        </div>
-
-        <!-- TABEL UTAMA -->
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 35%;">DESKRIPSI</th>
-                        <th style="width: 25%;">HARGA</th>
-                        <th style="width: 20%;">JUMLAH</th>
-                        <th style="width: 20%; text-align: right;">TOTAL</th>
-                    </tr>
-                </thead>
-                <tbody id="itemRows"></tbody>
-            </table>
-        </div>
-
-        <!-- SUMMARY -->
-        <div class="summary-container">
-            <div class="summary-box">
-                <div class="summary-row">
-                    <span>SUB TOTAL</span>
-                    <span>Rp. <span id="subtotalVal">0</span></span>
-                </div>
-                <div class="summary-row">
-                    <label>DISKON</label>
-                    <div>Rp. <input type="number" id="diskonInput" class="summary-input" value="200000" oninput="hitungSemua()"></div>
-                </div>
-                <div class="summary-row">
-                    <label>DP</label>
-                    <div>Rp. <input type="number" id="dpInput" class="summary-input" value="350000" oninput="hitungSemua()"></div>
-                </div>
-                <div class="summary-row total-line">
-                    <u>TOTAL</u>
-                    <span>Rp. <span id="grandTotalVal">0</span></span>
-                </div>
-            </div>
-        </div>
-
-        <!-- CARA PEMBAYARAN -->
-        <div class="bottom-section">
-            <div class="payment-box">
-                <div class="payment-title">CARA PEMBAYARAN</div>
-                <div class="pay-options">
-                    Name &nbsp; <b>Cash</b> &nbsp;/&nbsp; Online
-                </div>
-                <div style="margin-top: 4px;">Id Bank : -</div>
-                <div>Bank &nbsp;&nbsp;&nbsp;&nbsp;: -</div>
-
-                <div class="thanks-note">Terima kasih atas kunjungan anda</div>
-                <div class="sub-thanks">Menghubungkan anak dengan alam melalui camping</div>
-            </div>
-
-            <div class="pengelola-box">
-                PENGELOLA<br>
-                BUPER TALAGA<br>
-                PANCAR
-            </div>
-        </div>
-
-        <!-- FOOTER BAR -->
-        <div class="footer-bar">
-            <div class="footer-left-accent"></div>
-            <div class="footer-col">
-                <b>No. Hp</b>
-                +62 858-4677-5638<br>
-                ADE HIDAYAT
-            </div>
-            <div class="footer-col">
-                <b>ALAMAT</b>
-                Jl. Lengkong kulon<br>
-                kec.sindangwangi<br>
-                kab.majalengka
-            </div>
-            <div class="qr-box">
-                <div id="qrcode"></div>
-                <div class="scan-text">SCAN ADMIN</div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    const daftarBarang = [
-        { nama: "Tiket camping", harga: 15000, qty: 350, unit: "Peserta" },
-        { nama: "Tenda", harga: 75000, qty: 30, unit: "Unit" },
-        { nama: "Kayu bakar", harga: 110000, qty: 1, unit: "m³" },
-        { nama: "Tenda tarub", harga: 250000, qty: 1, unit: "Lokal" },
-        { nama: "Soundsystem", harga: 400000, qty: 1, unit: "Unit" }
-    ];
-
-    function muatTabel() {
-        const tbody = document.getElementById('itemRows');
-        tbody.innerHTML = '';
-        daftarBarang.forEach((item, idx) => {
-            tbody.innerHTML += `
-                <tr>
-                    <td><b>${item.nama}</b></td>
-                    <td>Rp. ${item.harga.toLocaleString('id-ID')}</td>
-                    <td>
-                        <input type="number" class="qty-input" id="qty-${idx}" value="${item.qty}" min="0" oninput="hitungSemua()">
-                        <span style="font-size:11px;">${item.unit}</span>
-                    </td>
-                    <td style="text-align: right;">Rp. <span id="total-${idx}">0</span></td>
-                </tr>
-            `;
-        });
-    }
-
-    function generateQRCode() {
-        document.getElementById("qrcode").innerHTML = "";
-        new QRCode(document.getElementById("qrcode"), {
-            text: "https://wa.me/6285846775638",
-            width: 128,
-            height: 128,
-            colorDark : "#000000",
-            colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.H
-        });
-    }
-
-    function hitungSemua() {
-        let subtotal = 0;
-        daftarBarang.forEach((item, idx) => {
-            const qty = parseFloat(document.getElementById(`qty-${idx}`).value) || 0;
-            const itemTotal = qty * item.harga;
-            document.getElementById(`total-${idx}`).innerText = itemTotal.toLocaleString('id-ID');
-            subtotal += itemTotal;
-        });
-
-        const diskon = parseFloat(document.getElementById('diskonInput').value) || 0;
-        const dp = parseFloat(document.getElementById('dpInput').value) || 0;
-        const grandTotal = Math.max(0, subtotal - diskon - dp);
-
-        document.getElementById('subtotalVal').innerText = subtotal.toLocaleString('id-ID');
-        document.getElementById('grandTotalVal').innerText = grandTotal.toLocaleString('id-ID');
-    }
-
-    function formatNomorWA(hp) {
-        let nomor = hp.replace(/[^0-9]/g, '');
-        if (nomor.startsWith('0')) {
-            nomor = '62' + nomor.slice(1);
-        }
-        return nomor;
-    }
-
-    function simpanKePDF() {
-        const element = document.getElementById('fakturArea');
-        const btn = document.getElementById('btnDownload');
+    <div class="max-w-6xl mx-auto space-y-6">
         
-        const inputNama = document.getElementById('namaPemesanInput').value.trim();
-        const inputHP = document.getElementById('hpPemesanInput').value.trim();
-        const namaPemesan = inputNama ? inputNama.replace(/[^a-zA-Z0-9]/g, "_") : "Pelanggan";
-        const totalBayar = document.getElementById('grandTotalVal').innerText;
-        
-        btn.innerText = "⏳ Memproses PDF...";
-
-        const opt = {
-            margin:       0,
-            filename:     `Bukti_pembayaran_TelagaPancar_${namaPemesan}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true, allowTaint: true, logging: false },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-
-        html2pdf().set(opt).from(element).save().then(() => {
-            btn.innerText = "💾 Simpan PDF & Chat WA";
+        <!-- Header & Navigasi Menu Admin / Pendaftar -->
+        <div class="wood-board p-5 rounded-2xl text-white flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="text-center sm:text-left">
+                <span class="bg-emerald-700/80 text-emerald-100 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-emerald-500">🌲 Bumi Perkemahan Resmi 🌲</span>
+                <h1 class="text-2xl sm:text-3xl font-extrabold mt-2 tracking-wide drop-shadow-md">BUPER TALAGA PANCAR</h1>
+            </div>
             
-            if (inputHP) {
-                const noWA = formatNomorWA(inputHP);
-                const sapaanNama = inputNama ? `Kak ${inputNama}` : "Kak/Bapak/Ibu";
-                
-                const pesanTeks = `Assalamu’alaikum ${sapaanNama},\n\nTerima kasih telah melakukan pembayaran sebesar Rp. ${totalBayar} di akhir kegiatan ini. Pembayaran telah kami terima dengan baik.\n\nBerikut kami lampirkan bukti pembayaran Anda🙏🏻\n\n\nTerima kasih banyak atas kunjungannya, semoga berkesan dan bisa kembali lagi ke Buper Talaga Pancar!\n\nSalam hangat dari saya,\n\nNurhasan [Pengelola Buper Talaga Pancar]`;
-                
-                setTimeout(() => {
-                    window.location.href = `https://wa.me/${noWA}?text=${encodeURIComponent(pesanTeks)}`;
-                }, 1000);
+            <!-- Tombol Pengalihan Menu -->
+            <div class="flex bg-amber-950/60 p-1.5 rounded-xl border border-amber-800">
+                <button onclick="switchView('user')" id="btnViewUser" class="px-4 py-2 text-xs font-bold rounded-lg transition bg-emerald-600 text-white shadow">
+                    ⛺ Formulir Pendaftaran
+                </button>
+                <button onclick="switchView('admin')" id="btnViewAdmin" class="px-4 py-2 text-xs font-bold rounded-lg transition text-amber-200 hover:text-white">
+                    ⚙️ Panel Admin
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= VIEW 1: FORMULIR PENDAFTARAN & KALENDER (USER) ================= -->
+        <div id="sectionUser" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- KALENDER TERBOKING (Kiri / 4 Kolom) -->
+            <div class="lg:col-span-4 wood-board p-5 rounded-2xl text-white flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-3 border-b border-amber-800 pb-2">
+                        <h2 class="text-base font-bold flex items-center gap-2">
+                            <span>📅</span> Kalender Terboking
+                        </h2>
+                        <span class="text-xs bg-amber-900/80 px-2 py-0.5 rounded text-amber-200">Juli 2026</span>
+                    </div>
+                    <p class="text-xs text-amber-100/80 mb-3">Tanggal berwarna merah adalah jadwal yang sudah dipesan sekolah lain.</p>
+
+                    <!-- Hari -->
+                    <div class="calendar-grid text-center text-xs font-bold text-amber-200 mb-1">
+                        <div>Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div>
+                    </div>
+
+                    <!-- Tanggal -->
+                    <div id="calendarDays" class="calendar-grid gap-1 text-center text-xs font-semibold">
+                        <!-- Di-generate otomatis lewat JS -->
+                    </div>
+                </div>
+
+                <!-- Legenda -->
+                <div class="mt-5 pt-3 border-t border-amber-800/80 flex items-center justify-around text-xs">
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded-full bg-red-600 inline-block shadow"></span>
+                        <span class="text-amber-100">Terboking</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded-full bg-emerald-600 inline-block shadow"></span>
+                        <span class="text-amber-100">Tersedia</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FORMULIR PENDAFTARAN (Kanan / 8 Kolom) -->
+            <div class="lg:col-span-8 wood-board p-5 sm:p-6 rounded-2xl text-white">
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2 border-b border-amber-800 pb-2">
+                    <span>⛺</span> Formulir Pendaftaran Perkemahan
+                </h2>
+
+                <form id="campingForm" class="space-y-4">
+                    
+                    <!-- 1. Data Pemesan & Sekolah -->
+                    <div class="card-box p-4 rounded-xl text-slate-800 space-y-3">
+                        <div class="flex items-center gap-2 text-xs font-bold text-emerald-900 bg-emerald-100/80 px-2.5 py-1 rounded w-fit">
+                            <span>1</span> DATA PEMESAN & SEKOLAH
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Pembooking</label>
+                            <input type="text" id="namaPembooking" required class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Masukkan Nama Lengkap">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Sekolah / Instansi</label>
+                            <input type="text" id="namaSekolah" required class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Masukkan Nama Sekolah">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Nomor Telepon / WhatsApp (Nomor Pendaftar)</label>
+                            <input type="tel" id="noTelepon" required class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Masukkan Nomor HP / WA Aktif">
+                        </div>
+                    </div>
+
+                    <!-- 2. Jadwal Kegiatan -->
+                    <div class="card-box p-4 rounded-xl text-slate-800 space-y-3">
+                        <div class="flex items-center gap-2 text-xs font-bold text-emerald-900 bg-emerald-100/80 px-2.5 py-1 rounded w-fit">
+                            <span>2</span> JADWAL KEGIATAN
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Tanggal Mulai</label>
+                                <input type="date" id="tglMulai" required class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Tanggal Selesai</label>
+                                <input type="date" id="tglSelesai" required class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Perkiraan Jumlah Siswa</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                                <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="jumlahSiswa" value="Di bawah 50" class="text-emerald-600"> Di bawah 50</label>
+                                <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="jumlahSiswa" value="50 s.d. 100" class="text-emerald-600"> 50 s.d. 100</label>
+                                <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="jumlahSiswa" value="100 s.d. 200" class="text-emerald-600"> 100 s.d. 200</label>
+                                <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="jumlahSiswa" value="200 s.d. 300" class="text-emerald-600"> 200 s.d. 300</label>
+                                <div class="col-span-full flex items-center gap-2 mt-1">
+                                    <input type="radio" name="jumlahSiswa" value="Lainnya" id="radioLainnya" class="text-emerald-600">
+                                    <span>300 s.d. Isi Sendiri:</span>
+                                    <input type="number" id="jumlahCustom" placeholder="Jumlah" class="w-20 px-2 py-0.5 border border-slate-300 rounded text-xs"> Orang
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Menu Alat Sewa -->
+                    <div class="card-box p-4 rounded-xl text-slate-800 space-y-3">
+                        <div class="flex items-center gap-2 text-xs font-bold text-emerald-900 bg-emerald-100/80 px-2.5 py-1 rounded w-fit">
+                            <span>3</span> MENU ALAT SEWA
+                        </div>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                            <div class="flex items-center justify-between bg-emerald-50/60 p-2 rounded border border-emerald-200">
+                                <label class="flex items-center gap-1.5 font-medium"><input type="checkbox" id="checkPrisma" class="text-emerald-600"> Tenda Prisma</label>
+                                <input type="number" id="jmlPrisma" placeholder="Unit" min="1" class="w-16 px-1.5 py-0.5 border border-slate-300 rounded text-xs">
+                            </div>
+                            <div class="flex items-center justify-between bg-emerald-50/60 p-2 rounded border border-emerald-200">
+                                <label class="flex items-center gap-1.5 font-medium"><input type="checkbox" id="checkDome" class="text-emerald-600"> Tenda Dome</label>
+                                <input type="number" id="jmlDome" placeholder="Unit" min="1" class="w-16 px-1.5 py-0.5 border border-slate-300 rounded text-xs">
+                            </div>
+                            <div class="flex items-center justify-between bg-emerald-50/60 p-2 rounded border border-emerald-200">
+                                <label class="flex items-center gap-1.5 font-medium"><input type="checkbox" id="checkTarub" class="text-emerald-600"> Tarub / Terpal</label>
+                                <input type="number" id="jmlTarub" placeholder="Unit" min="1" class="w-16 px-1.5 py-0.5 border border-slate-300 rounded text-xs">
+                            </div>
+                            <div class="flex items-center justify-between bg-emerald-50/60 p-2 rounded border border-emerald-200">
+                                <label class="flex items-center gap-1.5 font-medium"><input type="checkbox" id="checkKayu" class="text-emerald-600"> Kayu Bakar</label>
+                                <input type="number" id="jmlKayu" placeholder="m³" min="1" class="w-16 px-1.5 py-0.5 border border-slate-300 rounded text-xs">
+                            </div>
+                            <div class="flex items-center justify-between bg-emerald-50/60 p-2 rounded border border-emerald-200">
+                                <label class="flex items-center gap-1.5 font-medium"><input type="checkbox" id="checkSound" class="text-emerald-600"> Sound System</label>
+                                <input type="text" id="ketSound" placeholder="Paket" class="w-20 px-1.5 py-0.5 border border-slate-300 rounded text-xs">
+                            </div>
+                            <div class="flex items-center justify-between bg-emerald-50/60 p-2 rounded border border-emerald-200">
+                                <label class="flex items-center gap-1.5 font-medium"><input type="checkbox" id="checkCatering" class="text-emerald-600"> Catering</label>
+                                <input type="number" id="jmlCatering" placeholder="Porsi" min="1" class="w-16 px-1.5 py-0.5 border border-slate-300 rounded text-xs">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Pembayaran DP Booking -->
+                    <div class="card-box p-4 rounded-xl text-slate-800 space-y-3">
+                        <div class="flex items-center gap-2 text-xs font-bold text-emerald-900 bg-emerald-100/80 px-2.5 py-1 rounded w-fit">
+                            <span>4</span> PEMBAYARAN DP BOOKING <span class="text-[10px] font-normal text-slate-500">(Opsional)</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500">Kolom DP bersifat opsional, dapat dikosongkan jika ingin membayar nanti.</p>
+                        
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Nominal DP yang Dibayarkan (Rp)</label>
+                            <input type="text" id="nominalDp" class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="Contoh: Rp 500.000 (Opsional)">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Metode Pembayaran</label>
+                            <select id="metodeBayar" class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                                <option value="Belum Ditentukan">Belum Ditentukan</option>
+                                <option value="Transfer Bank">Transfer Bank</option>
+                                <option value="Bayar Tunai">Bayar Tunai / Cash</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Tombol Kirim -->
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-xl transition duration-200 shadow-xl border border-emerald-400 text-sm flex items-center justify-center gap-2">
+                        <span>🚀</span> KIRIM PENDAFTARAN SEKARANG
+                    </button>
+                </form>
+            </div>
+
+        </div>
+
+        <!-- ================= VIEW 2: PANEL ADMIN (PENGATURAN JADWAL & PEMBATALAN) ================= -->
+        <div id="sectionAdmin" class="hidden wood-board p-6 rounded-2xl text-white space-y-6">
+            <div class="border-b border-amber-800 pb-3">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <span>⚙️</span> Panel Pengelola / Admin Buper
+                </h2>
+                <p class="text-xs text-amber-200/80 mt-1">Kelola tanggal yang terboking secara manual (tambah jadwal baru atau batalkan/hapus tanggal).</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Tambah Tanggal Terboking -->
+                <div class="card-box p-5 rounded-xl text-slate-800 space-y-4">
+                    <h3 class="text-sm font-bold text-emerald-900 border-b pb-2">➕ Tambah Tanggal Terboking Baru</h3>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Pilih Tanggal</label>
+                        <input type="date" id="inputNewDate" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <button onclick="addBookedDate()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2 rounded-lg text-xs transition shadow">
+                        Simpan ke Kalender Terboking
+                    </button>
+                </div>
+
+                <!-- Daftar Tanggal Terboking & Batalkan -->
+                <div class="card-box p-5 rounded-xl text-slate-800 space-y-4">
+                    <h3 class="text-sm font-bold text-emerald-900 border-b pb-2">❌ Daftar Tanggal Terboking & Pembatalan</h3>
+                    <p class="text-[11px] text-slate-500">Klik tombol hapus untuk membatalkan jadwal yang sudah terisi.</p>
+                    
+                    <div id="adminBookedList" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                        <!-- Di-generate otomatis via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Skrip Logika Kalender, Admin & WhatsApp -->
+    <script>
+        // Data Tanggal Terboking (Disimpan di localStorage agar permanen di browser)
+        let bookedDates = JSON.parse(localStorage.getItem('buperBookedDates')) || [
+            '2026-07-06',
+            '2026-07-07',
+            '2026-07-15',
+            '2026-07-16',
+            '2026-07-17'
+        ];
+
+        function saveBookedDates() {
+            localStorage.setItem('buperBookedDates', JSON.stringify(bookedDates));
+        }
+
+        // Render Kalender Sisi User
+        function renderCalendar() {
+            const calendarDaysEl = document.getElementById('calendarDays');
+            calendarDaysEl.innerHTML = '';
+
+            const year = 2026;
+            const month = 6; // Juli
+            
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const totalDays = new Date(year, month + 1, 0).getDate();
+
+            for (let i = 0; i < firstDayIndex; i++) {
+                const emptyDiv = document.createElement('div');
+                emptyDiv.className = "h-7";
+                calendarDaysEl.appendChild(emptyDiv);
             }
-        }).catch(() => {
-            btn.innerText = "💾 Simpan PDF & Chat WA";
-            alert("Gagal mengunduh PDF, silakan coba lagi.");
+
+            for (let day = 1; day <= totalDays; day++) {
+                const dayDiv = document.createElement('div');
+                const formattedDay = day < 10 ? '0' + day : day;
+                const dateStr = `${year}-07-${formattedDay}`;
+                
+                let isBooked = bookedDates.includes(dateStr);
+                
+                dayDiv.className = `h-7 flex items-center justify-center rounded text-xs transition-all ${
+                    isBooked 
+                        ? 'bg-red-600 text-white font-bold shadow' 
+                        : 'bg-emerald-950/40 text-emerald-100 hover:bg-emerald-800'
+                }`;
+                dayDiv.innerText = day;
+                if(isBooked) dayDiv.title = "Sudah Terboking";
+                calendarDaysEl.appendChild(dayDiv);
+            }
+        }
+
+        // Render Daftar Manajemen Admin
+        function renderAdminList() {
+            const listEl = document.getElementById('adminBookedList');
+            listEl.innerHTML = '';
+
+            if(bookedDates.length === 0) {
+                listEl.innerHTML = '<p class="text-xs text-slate-400 italic">Belum ada tanggal terboking.</p>';
+                return;
+            }
+
+            // Urutkan tanggal
+            bookedDates.sort().forEach((dateStr) => {
+                let itemDiv = document.createElement('div');
+                itemDiv.className = "flex items-center justify-between bg-slate-100 p-2 rounded border text-xs";
+                itemDiv.innerHTML = `
+                    <span class="font-semibold text-slate-700">📅 ${dateStr}</span>
+                    <button onclick="removeBookedDate('${dateStr}')" class="bg-red-600 hover:bg-red-700 text-white px-2.5 py-1 rounded font-bold transition">Batalkan / Hapus</button>
+                `;
+                listEl.appendChild(itemDiv);
+            });
+        }
+
+        // Fungsi Tambah Tanggal oleh Admin
+        function addBookedDate() {
+            let newDate = document.getElementById('inputNewDate').value;
+            if(!newDate) {
+                alert('Silakan pilih tanggal terlebih dahulu!');
+                return;
+            }
+            if(bookedDates.includes(newDate)) {
+                alert('Tanggal tersebut sudah ada di daftar terboking!');
+                return;
+            }
+            bookedDates.push(newDate);
+            saveBookedDates();
+            renderCalendar();
+            renderAdminList();
+            document.getElementById('inputNewDate').value = '';
+            alert('Berhasil menambahkan tanggal terboking!');
+        }
+
+        // Fungsi Hapus/Batalkan Tanggal oleh Admin
+        function removeBookedDate(dateStr) {
+            if(confirm(`Yakin ingin membatalkan/menghapus tanggal ${dateStr} dari daftar terboking?`)) {
+                bookedDates = bookedDates.filter(d => d !== dateStr);
+                saveBookedDates();
+                renderCalendar();
+                renderAdminList();
+            }
+        }
+
+        // Fungsi Pengalihan Tampilan (User / Admin)
+        function switchView(view) {
+            const secUser = document.getElementById('sectionUser');
+            const secAdmin = document.getElementById('sectionAdmin');
+            const btnUser = document.getElementById('btnViewUser');
+            const btnAdmin = document.getElementById('btnViewAdmin');
+
+            if(view === 'user') {
+                secUser.classList.remove('hidden');
+                secAdmin.classList.add('hidden');
+                btnUser.className = "px-4 py-2 text-xs font-bold rounded-lg transition bg-emerald-600 text-white shadow";
+                btnAdmin.className = "px-4 py-2 text-xs font-bold rounded-lg transition text-amber-200 hover:text-white";
+            } else {
+                secUser.classList.add('hidden');
+                secAdmin.classList.remove('hidden');
+                btnAdmin.className = "px-4 py-2 text-xs font-bold rounded-lg transition bg-amber-700 text-white shadow";
+                btnUser.className = "px-4 py-2 text-xs font-bold rounded-lg transition text-emerald-200 hover:text-white";
+                renderAdminList();
+            }
+        }
+
+        // Inisialisasi awal
+        renderCalendar();
+
+        // Kirim Formulir ke WhatsApp Admin
+        document.getElementById('campingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            let nama = document.getElementById('namaPembooking').value;
+            let sekolah = document.getElementById('namaSekolah').value;
+            let telp = document.getElementById('noTelepon').value;
+            let tglMulai = document.getElementById('tglMulai').value;
+            let tglSelesai = document.getElementById('tglSelesai').value;
+            
+            let jumlahSiswa = "";
+            let selectedSiswa = document.querySelector('input[name="jumlahSiswa"]:checked');
+            if(selectedSiswa) {
+                if(selectedSiswa.value === "Lainnya") {
+                    jumlahSiswa = document.getElementById('jumlahCustom').value + " orang (Lebih dari 300)";
+                } else {
+                    jumlahSiswa = selectedSiswa.value + " orang";
+                }
+            }
+
+            let alatSewa = [];
+            if(document.getElementById('checkPrisma').checked) alatSewa.push("- Tenda Prisma: " + document.getElementById('jmlPrisma').value + " unit");
+            if(document.getElementById('checkDome').checked) alatSewa.push("- Tenda Dome: " + document.getElementById('jmlDome').value + " unit");
+            if(document.getElementById('checkTarub').checked) alatSewa.push("- Tarub/Terpal: " + document.getElementById('jmlTarub').value + " unit");
+            if(document.getElementById('checkKayu').checked) alatSewa.push("- Kayu Bakar: " + document.getElementById('jmlKayu').value + " m³");
+            if(document.getElementById('checkSound').checked) alatSewa.push("- Sound System: " + document.getElementById('ketSound').value);
+            if(document.getElementById('checkCatering').checked) alatSewa.push("- Catering: " + document.getElementById('jmlCatering').value + " porsi");
+
+            let nominalDp = document.getElementById('nominalDp').value.trim();
+            if(nominalDp === "") nominalDp = "Belum diisi / Menyusul";
+            
+            let metodeBayar = document.getElementById('metodeBayar').value;
+
+            let pesan = `Halo Admin Buper Talaga Pancar, saya ingin mendaftar area perkemahan dengan detail berikut:%0A%0A` +
+                        `*1. DATA PEMESAN*%0A` +
+                        `- Nama Pembooking: ${nama}%0A` +
+                        `- Sekolah/Instansi: ${sekolah}%0A` +
+                        `- No. WhatsApp Pendaftar: *${telp}*%0A%0A` +
+                        `*2. JADWAL KEGIATAN*%0A` +
+                        `- Tanggal Mulai: ${tglMulai}%0A` +
+                        `- Tanggal Selesai: ${tglSelesai}%0A` +
+                        `- Jumlah Siswa: ${jumlahSiswa}%0A%0A` +
+                        `*3. MENU ALAT SEWA*%0A` + (alatSewa.length > 0 ? alatSewa.join('%0A') : 'Tidak ada alat yang disewa') + `%0A%0A` +
+                        `*4. PEMBAYARAN DP*%0A` +
+                        `- Nominal DP: ${nominalDp}%0A` +
+                        `- Metode: ${metodeBayar}`;
+
+            // Ganti dengan nomor WhatsApp tujuan admin (format internasional tanpa angka 0 di depan, contoh: 628123456789)
+            let nomorAdmin = "6281234567890"; 
+            window.open(`https://wa.me/${nomorAdmin}?text=${pesan}`, '_blank');
         });
-    }
-
-    muatTabel();
-    generateQRCode();
-    hitungSemua();
-</script>
-
+    </script>
 </body>
 </html>
