@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FAKTUR PEMBAYARAN - TALAGA PANCAR</title>
-    <!-- Library untuk download PDF langsung di HP -->
+    <!-- Library html2pdf untuk konversi ke PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
@@ -12,12 +12,11 @@
         
         .paper {
             width: 100%;
-            max-width: 750px;
+            max-width: 680px;
             background: #fff;
             position: relative;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             overflow: hidden;
-            padding-bottom: 70px;
         }
 
         /* --- DEKORASI PINGGIR (AKSEN BIRU) --- */
@@ -25,17 +24,18 @@
             position: absolute;
             top: 0;
             right: 0;
-            width: 18px;
-            height: 160px;
+            width: 16px;
+            height: 140px;
             background: linear-gradient(to right, #2c3a59, #4a5c82);
         }
         .bottom-right-accent {
             position: absolute;
             bottom: 0;
             right: 0;
-            width: 25px;
-            height: 280px;
+            width: 20px;
+            height: 200px;
             background: #1e283d;
+            z-index: 1;
         }
 
         /* --- HEADER --- */
@@ -43,48 +43,48 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            padding-right: 35px;
+            padding-right: 30px;
         }
         .header-green-box {
             background: #50643a;
             color: white;
-            padding: 25px 35px;
-            border-bottom-left-radius: 35px;
-            border-bottom-right-radius: 35px;
-            width: 58%;
+            padding: 18px 25px;
+            border-bottom-left-radius: 25px;
+            border-bottom-right-radius: 25px;
+            width: 55%;
         }
         .header-green-box h1 {
             margin: 0;
-            font-size: 32px;
+            font-size: 26px;
             font-weight: 900;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
             line-height: 1;
         }
         .header-green-box h2 {
-            margin: 5px 0 0 0;
-            font-size: 26px;
+            margin: 4px 0 0 0;
+            font-size: 20px;
             font-weight: 700;
             letter-spacing: 1px;
         }
         .logo-area {
             text-align: center;
-            padding-top: 25px;
+            padding-top: 15px;
         }
         .logo-icon {
-            width: 50px;
-            height: 50px;
+            width: 42px;
+            height: 42px;
             fill: #50643a;
         }
         .logo-title {
             color: #2c3a59;
             font-weight: 900;
-            font-size: 16px;
+            font-size: 14px;
             letter-spacing: 1px;
             margin-top: 2px;
         }
         .logo-sub {
             color: #50643a;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: bold;
             letter-spacing: 1px;
         }
@@ -93,141 +93,143 @@
         .info-section {
             display: flex;
             justify-content: space-between;
-            padding: 25px 35px 10px 35px;
-            font-size: 14px;
+            padding: 15px 30px 5px 30px;
+            font-size: 13px;
         }
         .from-box { width: 45%; }
-        .from-box label { font-weight: bold; font-size: 15px; }
+        .from-box label { font-weight: bold; font-size: 14px; }
         .input-underline {
             border: none;
             border-bottom: 1px solid #555;
             width: 100%;
-            margin-top: 12px;
+            margin-top: 6px;
             outline: none;
-            font-size: 14px;
+            font-size: 13px;
             padding: 2px 0;
         }
-        .meta-box { width: 48%; font-size: 14px; }
-        .meta-row { display: flex; margin-bottom: 6px; }
-        .meta-label { width: 80px; }
+        .meta-box { width: 48%; font-size: 13px; }
+        .meta-row { display: flex; margin-bottom: 4px; }
+        .meta-label { width: 75px; }
         .meta-val { display: flex; flex: 1; }
-        .meta-input { border: none; outline: none; width: 100%; font-size: 14px; }
+        .meta-input { border: none; outline: none; width: 100%; font-size: 13px; }
 
         /* --- TABEL DESKRIPSI --- */
-        .table-container { padding: 10px 35px; }
+        .table-container { padding: 5px 30px; }
         table { width: 100%; border-collapse: collapse; }
         th {
             text-align: left;
-            padding: 8px 4px;
-            font-size: 14px;
+            padding: 6px 4px;
+            font-size: 13px;
             font-weight: 900;
             border-bottom: 2px solid #222;
         }
         td {
-            padding: 8px 4px;
-            font-size: 14px;
+            padding: 6px 4px;
+            font-size: 13px;
             border-bottom: 1px solid #111;
         }
         .qty-input {
-            width: 50px;
+            width: 45px;
             border: 1px solid #ccc;
             border-radius: 3px;
             text-align: center;
-            font-size: 13px;
+            font-size: 12px;
             padding: 2px;
         }
 
         /* --- SUMMARY --- */
-        .summary-container { display: flex; justify-content: flex-end; padding: 5px 35px; }
-        .summary-box { width: 250px; font-size: 14px; }
-        .summary-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+        .summary-container { display: flex; justify-content: flex-end; padding: 5px 30px; }
+        .summary-box { width: 230px; font-size: 13px; }
+        .summary-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; }
         .summary-row label { font-weight: bold; color: #333; }
         .summary-input {
-            width: 80px;
+            width: 75px;
             border: 1px solid #aaa;
             border-radius: 3px;
             text-align: right;
             padding: 2px;
-            font-size: 13px;
+            font-size: 12px;
         }
         .total-line {
             border-top: 2px solid #111;
-            margin-top: 6px;
-            padding-top: 6px;
+            margin-top: 4px;
+            padding-top: 4px;
             font-weight: 900;
-            font-size: 16px;
+            font-size: 15px;
         }
 
         /* --- BOTTOM SECTION --- */
         .bottom-section {
             display: flex;
             justify-content: space-between;
-            padding: 10px 35px 20px 35px;
-            font-size: 13px;
+            padding: 10px 30px 10px 30px;
+            font-size: 12px;
+            position: relative;
+            z-index: 2;
         }
         .payment-box { width: 55%; }
-        .payment-title { font-weight: 900; font-size: 15px; margin-bottom: 6px; }
+        .payment-title { font-weight: 900; font-size: 13px; margin-bottom: 4px; }
         .pay-options span { cursor: pointer; text-decoration: underline; font-weight: bold; }
-        .thanks-note { margin-top: 20px; font-weight: bold; font-size: 14px; }
-        .sub-thanks { font-size: 12px; color: #444; margin-top: 4px; }
+        .thanks-note { margin-top: 12px; font-weight: bold; font-size: 13px; }
+        .sub-thanks { font-size: 11px; color: #444; margin-top: 2px; }
 
         .pengelola-box {
             width: 40%;
             text-align: center;
-            margin-top: 40px;
+            margin-top: 20px;
             font-weight: 900;
-            font-size: 14px;
+            font-size: 13px;
             color: #111;
-            line-height: 1.3;
+            line-height: 1.2;
         }
 
         /* --- FOOTER BAR --- */
         .footer-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
+            position: relative;
+            margin-top: 15px;
             width: 100%;
-            height: 60px;
+            height: 55px;
             background: #50643a;
             color: white;
             display: flex;
             align-items: center;
-            padding-left: 70px;
-            padding-right: 140px;
-            font-size: 11px;
+            padding-left: 60px;
+            padding-right: 110px;
+            font-size: 10px;
+            z-index: 2;
         }
         .footer-left-accent {
             position: absolute;
             left: 0;
             bottom: 0;
-            width: 55px;
+            width: 45px;
             height: 100%;
             background: #1e283d;
-            border-right: 4px solid #3b4e75;
+            border-right: 3px solid #3b4e75;
         }
         .footer-col { flex: 1; }
-        .footer-col b { display: block; font-size: 12px; margin-bottom: 2px; }
+        .footer-col b { display: block; font-size: 11px; margin-bottom: 1px; }
         .qr-box {
             position: absolute;
-            right: 25px;
+            right: 20px;
             bottom: 0;
-            height: 60px;
+            height: 55px;
             background: white;
             display: flex;
             align-items: center;
-            padding: 2px 6px;
+            padding: 2px 5px;
         }
         .scan-text {
             writing-mode: vertical-rl;
             text-orientation: upright;
-            font-size: 8px;
+            font-size: 7px;
             font-weight: bold;
             color: #000;
             letter-spacing: -1px;
             margin-left: 2px;
         }
 
-        /* --- TOMBOL CETAK / SIMPAN --- */
+        /* --- TOMBOL CETAK --- */
         .btn-print-float {
             position: fixed;
             bottom: 20px;
@@ -235,9 +237,9 @@
             background: #50643a;
             color: white;
             border: none;
-            padding: 14px 22px;
+            padding: 12px 20px;
             border-radius: 30px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: bold;
             box-shadow: 0 4px 12px rgba(0,0,0,0.4);
             cursor: pointer;
@@ -272,7 +274,7 @@
     <div class="info-section">
         <div class="from-box">
             <label>FROM:</label>
-            <input type="text" class="input-underline" placeholder="Nama Pemesan">
+            <input type="text" id="namaPemesanInput" class="input-underline" placeholder="Nama Pemesan">
             <input type="text" class="input-underline">
         </div>
         <div class="meta-box">
@@ -364,7 +366,7 @@
             kab.majalengka
         </div>
         <div class="qr-box">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=50x50&data=BUPER+TALAGA+PANCAR" alt="QR" width="50" height="50">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=50x50&data=BUPER+TALAGA+PANCAR" crossorigin="anonymous" alt="QR" width="45" height="45">
             <div class="scan-text">SCAN ADMIN</div>
         </div>
     </div>
@@ -389,7 +391,7 @@
                     <td>Rp. ${item.harga.toLocaleString('id-ID')}</td>
                     <td>
                         <input type="number" class="qty-input" id="qty-${idx}" value="0" min="0" oninput="hitungSemua()">
-                        <span style="font-size:12px;">${item.unit}</span>
+                        <span style="font-size:11px;">${item.unit}</span>
                     </td>
                     <td style="text-align: right;">Rp. <span id="total-${idx}">0</span></td>
                 </tr>
@@ -417,13 +419,18 @@
     function simpanKePDF() {
         const element = document.getElementById('fakturArea');
         const btn = document.getElementById('btnDownload');
+        
+        // Mengambil nama pemesan secara otomatis dari kotak FROM
+        const inputNama = document.getElementById('namaPemesanInput').value.trim();
+        const namaPemesan = inputNama ? inputNama.replace(/[^a-zA-Z0-9]/g, "_") : "Pelanggan";
+        
         btn.innerText = "⏳ Memproses PDF...";
 
         const opt = {
             margin:       0,
-            filename:     'Faktur_Talaga_Pancar.pdf',
+            filename:     `Faktur_TelagaPancar_${namaPemesan}.pdf`,
             image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true },
+            html2canvas:  { scale: 2, useCORS: true, allowTaint: true },
             jsPDF:        { unit: 'pt', format: 'a4', orientation: 'portrait' }
         };
 
@@ -431,7 +438,7 @@
             btn.innerText = "💾 Simpan File PDF";
         }).catch(() => {
             btn.innerText = "💾 Simpan File PDF";
-            alert("Gagal mengunduh, silakan coba lagi.");
+            alert("Gagal mengunduh PDF, silakan coba lagi.");
         });
     }
 
